@@ -17,13 +17,23 @@ public class SendMessageFormat {
     String commandQuote;
     @Value("${bot.button.strip}")
     String commandStrip;
+    @Value("${bot.button.subscribe}")
+    String commandSubscribe;
+    @Value("${bot.button.unsubscribe}")
+    String commandUnsubscribe;
 
     public SendMessage getSendMessageBaseFormat(long chatId) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setParseMode("HTML");
         sendMessage.disableWebPagePreview();
         sendMessage.setChatId(String.valueOf(chatId));
-        setButtons(sendMessage, commandQuote, commandStrip);
+//        setButtons(sendMessage, commandQuote, commandStrip);
+
+        List<List<String>> buttons = new ArrayList<>();
+        buttons.add(Arrays.asList(commandQuote, commandStrip));
+        buttons.add(Arrays.asList(commandSubscribe, commandUnsubscribe));
+        setButtons(sendMessage, buttons);
+
         return sendMessage;
     }
 

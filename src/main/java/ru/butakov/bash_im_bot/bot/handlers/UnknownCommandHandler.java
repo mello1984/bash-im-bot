@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UnknownCommandHandler extends AbstractHandler {
-    @Value("${reply.unknowncommand}")
+    @Value("${reply.unknown}")
     String answerText;
 
     @Override

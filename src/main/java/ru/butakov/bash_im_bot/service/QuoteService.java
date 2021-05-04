@@ -22,14 +22,22 @@ import java.util.regex.Pattern;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class QuoteService {
+    public static String QUOTE_LINK;
+
     @Autowired
     RestTemplate restTemplate;
     @Autowired
     StateService stateService;
-    @Value("${bash.im.quote.link}")
+
     String quoteLink;
     @Value("${bash.im.main.page.title}")
     String bashImMainPageTitle;
+
+    @Value("${bash.im.quote.link}")
+    public void setQuoteLink(String quoteLink) {
+        this.quoteLink = quoteLink;
+        QUOTE_LINK = quoteLink;
+    }
 
     final Random random = new Random();
 

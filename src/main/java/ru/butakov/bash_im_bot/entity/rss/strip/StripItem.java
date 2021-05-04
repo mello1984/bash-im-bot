@@ -1,9 +1,6 @@
 package ru.butakov.bash_im_bot.entity.rss.strip;
 
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
@@ -38,44 +35,18 @@ public class StripItem {
     @EqualsAndHashCode.Include
     int number;
     @Transient
-    boolean prepared = false;
-    @Transient
-    String textMessage;
-
-
-//    public StripItem(int number) {
-//        this.number = number;
-//        link = "https://bash.im/comics/" + number;
-//        prepared = true;
-//        updateItem();
-//    }
+    @Getter
+    boolean prepared;
 
     public String getTextMessage() {
-//        if (!prepared) prepareItemFromXmlIfNeed();
-        String url = MessageFormat.format("<a href=\"{0}\">{1}</a>", link, "#" + number);
-//        textMessage = MessageFormat.format("{0}\n{1}", "#" + number, url);
-        return url;
+        return MessageFormat.format("<a href=\"{0}\">#{1}</a>", link, String.valueOf(number));
     }
 
-    public int getNumber() {
-//        if (!prepared) prepareItemFromXmlIfNeed();
-        return number;
-    }
-
-
-    public StripItem prepareItemFromXmlIfNeed() {
+    public void prepareAfterCreatingFromXml() {
         if (!prepared) {
             number = Integer.parseInt(link.replaceAll("https://bash.im/comics/", ""));
-            link = description.replaceAll("<img src=\"", "").replaceAll("\">", "");
-
-//            updateItem();
+            link = description.replaceAll("(<img src=\"|\">)", "");
             prepared = true;
         }
-        return this;
-    }
-
-    private void updateItem() {
-        String url = MessageFormat.format("<a href=\"{0}\">{1}</a>", link, "#" + number);
-        textMessage = MessageFormat.format("{0}\n{1}", "#" + number, url);
     }
 }

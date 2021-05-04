@@ -13,3 +13,5 @@ public class BashImBotApplication {
     }
 
 }
+
+//TODO База всех комиксов

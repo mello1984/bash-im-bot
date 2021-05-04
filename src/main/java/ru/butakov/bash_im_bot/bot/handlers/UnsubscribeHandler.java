@@ -16,6 +16,8 @@ public class UnsubscribeHandler extends AbstractHandler{
     StateService stateService;
     @Value("${reply.unsubscribe}")
     String answerText;
+    @Value("${bot.button.unsubscribe}")
+    String command;
 
     @Override
     public SendMessage handle(Message message) {
@@ -31,6 +33,6 @@ public class UnsubscribeHandler extends AbstractHandler{
 
     @Override
     public String getCommandString() {
-        return "Отписаться";
+        return command;
     }
 }

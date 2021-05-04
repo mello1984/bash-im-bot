@@ -37,7 +37,7 @@ public class UpdaterService {
     String rssStripLink;
 
     @Scheduled(fixedDelayString = "${bash.im.update.delay}")
-    private void updataData() {
+    private void update() {
         updateQuotes();
         updateStrips();
     }
@@ -58,7 +58,6 @@ public class UpdaterService {
 
         int count = 0;
         for (StripItem item : items) {
-            item.prepareItemFromXmlIfNeed();
             if (stateService.addStripItemToDb(item)) {
                 String text = item.getTextMessage();
                 count++;

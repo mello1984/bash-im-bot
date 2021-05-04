@@ -28,7 +28,8 @@ public class HandlerManager {
     }
 
     public SendMessage handleInputMessage(Message message) {
-        log.info("Choose handler: " + handlersMap.getOrDefault(message.getText(), defaultHandler));
-        return handlersMap.getOrDefault(message.getText(), defaultHandler).handle(message);
+        InputMessageHandler handler = handlersMap.getOrDefault(message.getText(), defaultHandler);
+        log.info("Choose handler: {}", handler);
+        return handler.handle(message);
     }
 }

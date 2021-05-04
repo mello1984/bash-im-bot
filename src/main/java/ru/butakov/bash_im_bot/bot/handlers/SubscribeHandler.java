@@ -14,6 +14,8 @@ public class SubscribeHandler extends AbstractHandler{
     StateService stateService;
     @Value("${reply.subscribe}")
     String answerText;
+    @Value("${bot.button.subscribe}")
+    String command;
 
     @Override
     public SendMessage handle(Message message) {
@@ -29,6 +31,6 @@ public class SubscribeHandler extends AbstractHandler{
 
     @Override
     public String getCommandString() {
-        return "Подписаться";
+        return command;
     }
 }

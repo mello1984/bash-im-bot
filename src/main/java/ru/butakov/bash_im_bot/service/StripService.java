@@ -5,7 +5,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import ru.butakov.bash_im_bot.entity.rss.strip.StripItem;
 
 import java.util.Random;
@@ -16,10 +15,8 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StripService {
     @Autowired
-    RestTemplate restTemplate;
-    @Autowired
     StateService stateService;
-    Random random = new Random();
+    final Random random = new Random();
 
     public String getRandomStrip() {
         Set<StripItem> strips = stateService.getStripItemSet();

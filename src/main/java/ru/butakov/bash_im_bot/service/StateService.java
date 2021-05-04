@@ -63,6 +63,7 @@ public class StateService {
     public Set<Long> getUserSet() {
         return Collections.unmodifiableSet(state.getUserSet());
     }
+
     public Set<StripItem> getStripItemSet() {
         return Collections.unmodifiableSet(state.getStripItems());
     }
@@ -70,7 +71,8 @@ public class StateService {
     @Transactional
     public boolean addStripItemToDb(StripItem item) {
         boolean result = false;
-        if (!state.getStripItems().contains(item)) {
+        item.prepareAfterCreatingFromXml();
+        if (item.isPrepared() && !state.getStripItems().contains(item)) {
             item = stripRepository.save(item);
             result = state.getStripItems().add(item);
             stateRepository.save(state);
