@@ -2,6 +2,7 @@ package ru.butakov.bash_im_bot.service;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -10,7 +11,7 @@ import ru.butakov.bash_im_bot.entity.rss.strip.StripItem;
 import java.util.Random;
 import java.util.Set;
 
-
+@Slf4j
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StripService {
@@ -21,11 +22,9 @@ public class StripService {
     Random random = new Random();
 
     public String getRandomStrip() {
-        Set<Integer> strips = stateService.getStripsSet();
+        Set<StripItem> strips = stateService.getStripItemSet();
         int rnd = random.nextInt(strips.size() - 1);
-        int number = strips.stream().skip(rnd).findFirst().get();
-        System.out.println(strips.size() + ":" + rnd + ":" + number);
-        StripItem stripItem = new StripItem(number);
+        StripItem stripItem = strips.stream().skip(rnd).findFirst().get();
         return stripItem.getTextMessage();
     }
 }

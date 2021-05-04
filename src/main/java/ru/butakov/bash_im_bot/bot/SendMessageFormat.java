@@ -22,7 +22,6 @@ public class SendMessageFormat {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setParseMode("HTML");
         sendMessage.disableWebPagePreview();
-//        sendMessage.enableWebPagePreview();
         sendMessage.setChatId(String.valueOf(chatId));
         setButtons(sendMessage, commandQuote, commandStrip);
         return sendMessage;
@@ -31,6 +30,12 @@ public class SendMessageFormat {
     public SendMessage getSendMessageBaseFormat(long chatId, String text) {
         SendMessage sendMessage = getSendMessageBaseFormat(chatId);
         sendMessage.setText(text);
+        return sendMessage;
+    }
+
+    public SendMessage getSendMessageBaseFormat(long chatId, String text, boolean enableWebPagePreview) {
+        SendMessage sendMessage = getSendMessageBaseFormat(chatId, text);
+        if (enableWebPagePreview) sendMessage.enableWebPagePreview();
         return sendMessage;
     }
 

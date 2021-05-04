@@ -2,23 +2,31 @@ package ru.butakov.bash_im_bot.service;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.butakov.bash_im_bot.dao.StateRepository;
+import ru.butakov.bash_im_bot.dao.StripRepository;
 import ru.butakov.bash_im_bot.entity.State;
+import ru.butakov.bash_im_bot.entity.rss.strip.StripItem;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Slf4j
 public class StateService {
     final StateRepository stateRepository;
     final State state;
+    final StripRepository stripRepository;
 
-    public StateService(@Autowired StateRepository stateRepository) {
+    public StateService(@Autowired StateRepository stateRepository,
+                        @Autowired StripRepository stripRepository) {
         this.stateRepository = stateRepository;
+        this.stripRepository = stripRepository;
         state = loadState();
     }
 
@@ -38,49 +46,35 @@ public class StateService {
         Optional<State> stateOptional = stateRepository.findById(1);
         State resultState = null;
         if (stateOptional.isEmpty()) {
-            resultState = new State(1, 0, 0);
+            resultState = new State(1, 0);
             stateRepository.save(resultState);
         }
         return stateOptional.orElse(resultState);
     }
 
     public void addUser(long chatId) {
-        if (state.getUserSet().add(chatId)) save(state);
+        if (state.getUserSet().add(chatId)) stateRepository.save(state);
     }
 
     public void removeUser(long chatId) {
-        if (state.getUserSet().remove(chatId)) save(state);
+        if (state.getUserSet().remove(chatId)) stateRepository.save(state);
     }
 
-    public Set<Long> getSubscribers() {
+    public Set<Long> getUserSet() {
         return Collections.unmodifiableSet(state.getUserSet());
     }
-
-    public Set<Integer> getStripsSet() {
-        return Collections.unmodifiableSet(state.getStripSet());
+    public Set<StripItem> getStripItemSet() {
+        return Collections.unmodifiableSet(state.getStripItems());
     }
 
-    public boolean addStripToDb(int number) {
-        boolean result = state.getStripSet().add(number);
-        if (result) {
-            save(state);
+    @Transactional
+    public boolean addStripItemToDb(StripItem item) {
+        boolean result = false;
+        if (!state.getStripItems().contains(item)) {
+            item = stripRepository.save(item);
+            result = state.getStripItems().add(item);
+            stateRepository.save(state);
         }
         return result;
-    }
-
-    /**
-     * It's really strange, but by default hibernate duplicate entity in one-to-many relations, and it work in Java because
-     * Set removes duplicates. I don't know solution, so create this method. It's bad, but work...
-     */
-    private void save(State state) {
-        Set<Integer> strips = state.getStripSet();
-        state.setStripSet(Collections.emptySet());
-        Set<Long> users = state.getUserSet();
-        state.setStripSet(Collections.emptySet());
-        stateRepository.save(state);
-
-        state.setStripSet(strips);
-        state.setUserSet(users);
-        stateRepository.save(state);
     }
 }

@@ -2,6 +2,7 @@ package ru.butakov.bash_im_bot.entity;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import ru.butakov.bash_im_bot.entity.rss.strip.StripItem;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -17,26 +18,22 @@ import java.util.Set;
 
 public class State {
     @Id
+    @Column
     int id;
-
     @Column(name = "max_quote")
     int maxQuoteNumber;
-    @Column(name = "max_strip")
-    int maxStripNumber;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "strip_ids", joinColumns = @JoinColumn(name = "id"))
-    @Column(name = "strip_id")
-    Set<Integer> stripSet = new HashSet<>();
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "strip_id")
+    Set<StripItem> stripItems = new HashSet<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_ids", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "chat_id")
     Set<Long> userSet = new HashSet<>();
 
-    public State(int id, int maxQuote, int maxStrip) {
+    public State(int id, int maxQuote) {
         this.id = id;
         this.maxQuoteNumber = maxQuote;
-        this.maxStripNumber = maxStrip;
     }
 }

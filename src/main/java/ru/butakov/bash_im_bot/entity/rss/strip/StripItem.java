@@ -6,54 +6,72 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import java.text.MessageFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 
 @XmlType(name = "item")
 @XmlAccessorType(XmlAccessType.NONE)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
 @NoArgsConstructor
-@EqualsAndHashCode(of = "number")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, doNotUseGetters = true)
+@Entity
+@Table(name = "strip")
 public class StripItem {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
+    int id;
+
+    @XmlElement(name = "description")
+    @Transient
+    String description;
+    @Column
     @XmlElement(name = "link")
     String link;
 
-    boolean prepared = false;
-    String textMessage;
+    @Column
+    @EqualsAndHashCode.Include
     int number;
+    @Transient
+    boolean prepared = false;
+    @Transient
+    String textMessage;
 
-    public StripItem(int number) {
-        this.number = number;
-        link = "https://bash.im/comics/" + number;
-        prepared = true;
-        updateItem();
-    }
+
+//    public StripItem(int number) {
+//        this.number = number;
+//        link = "https://bash.im/comics/" + number;
+//        prepared = true;
+//        updateItem();
+//    }
 
     public String getTextMessage() {
-        prepareItemFromXmlIfNeed();
-        return textMessage;
+//        if (!prepared) prepareItemFromXmlIfNeed();
+        String url = MessageFormat.format("<a href=\"{0}\">{1}</a>", link, "#" + number);
+//        textMessage = MessageFormat.format("{0}\n{1}", "#" + number, url);
+        return url;
     }
 
     public int getNumber() {
-        prepareItemFromXmlIfNeed();
+//        if (!prepared) prepareItemFromXmlIfNeed();
         return number;
     }
 
 
-    private void prepareItemFromXmlIfNeed() {
+    public StripItem prepareItemFromXmlIfNeed() {
         if (!prepared) {
-            String[] s = link.split("/");
-            number = Integer.parseInt(s[s.length - 1]);
-            updateItem();
+            number = Integer.parseInt(link.replaceAll("https://bash.im/comics/", ""));
+            link = description.replaceAll("<img src=\"", "").replaceAll("\">", "");
+
+//            updateItem();
             prepared = true;
         }
+        return this;
     }
 
     private void updateItem() {

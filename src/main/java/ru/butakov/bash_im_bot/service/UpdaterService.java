@@ -54,18 +54,21 @@ public class UpdaterService {
 
         StripRSS rss = responseEntity.getBody();
         List<StripItem> items = rss.getChannel().getItemList();
-        Set<Long> subscribers = stateService.getSubscribers();
+        Set<Long> subscribers = stateService.getUserSet();
 
+        int count = 0;
         for (StripItem item : items) {
-            if (stateService.addStripToDb(item.getNumber())) {
+            item.prepareItemFromXmlIfNeed();
+            if (stateService.addStripItemToDb(item)) {
                 String text = item.getTextMessage();
+                count++;
                 subscribers.forEach(id -> {
-                    SendMessage sendMessage = sendMessageFormat.getSendMessageBaseFormat(id, text);
+                    SendMessage sendMessage = sendMessageFormat.getSendMessageBaseFormat(id, text, true);
                     messageSenderService.offerBotApiMethodToQueue(sendMessage);
                 });
-                log.info("UpdaterService update task done, add strip to db: {}", item.getNumber());
             }
         }
+        log.info("UpdaterService update task done, add {} strip to db", count);
     }
 
 
@@ -82,7 +85,8 @@ public class UpdaterService {
         QuoteRSS rss = responseEntity.getBody();
         List<QuoteItem> items = rss.getChannel().getItemList();
         int maxItem = stateService.getMaxQuoteNumber();
-        Set<Long> subscribers = stateService.getSubscribers();
+        Set<Long> subscribers = stateService.getUserSet();
+
         for (QuoteItem item : items) {
             if (item.getNumber() > stateService.getMaxQuoteNumber()) {
                 if (item.getNumber() > maxItem) maxItem = item.getNumber();
