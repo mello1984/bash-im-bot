@@ -24,7 +24,6 @@ import java.util.Set;
 public class UpdaterService {
     @Autowired
     RestTemplate restTemplate;
-
     @Autowired
     SendMessageFormat sendMessageFormat;
     @Autowired
@@ -36,7 +35,7 @@ public class UpdaterService {
     @Value("${bash.im.strip.rss}")
     String rssStripLink;
 
-    @Scheduled(fixedDelayString = "${bash.im.update.delay}")
+    @Scheduled(fixedDelayString = "${bash.im.updateperiod}")
     private void update() {
         updateQuotes();
         updateStrips();
@@ -70,7 +69,6 @@ public class UpdaterService {
         log.info("UpdaterService update task done, add {} strip to db", count);
     }
 
-
     private void updateQuotes() {
         ResponseEntity<QuoteRSS> responseEntity = restTemplate.exchange(
                 rssQuoteLink,
@@ -83,8 +81,8 @@ public class UpdaterService {
 
         QuoteRSS rss = responseEntity.getBody();
         List<QuoteItem> items = rss.getChannel().getItemList();
-        int maxItem = stateService.getMaxQuoteNumber();
         Set<Long> subscribers = stateService.getUserSet();
+        int maxItem = stateService.getMaxQuoteNumber();
 
         for (QuoteItem item : items) {
             if (item.getNumber() > stateService.getMaxQuoteNumber()) {

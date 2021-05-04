@@ -22,7 +22,7 @@ public class MessageSenderService {
     BashBot bashBot;
     final BlockingQueue<BotApiMethod<?>> updateBlockingQueue = new LinkedBlockingQueue<>();
 
-    @Scheduled(fixedDelayString = "${telegrambot.updateperiod}")
+    @Scheduled(fixedDelayString = "${bot.sendmessage.updateperiod}")
     private void sendUpdateFromQueue() throws InterruptedException {
         BotApiMethod<?> botApiMethod = updateBlockingQueue.take();
         try {

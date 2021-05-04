@@ -5,12 +5,12 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.butakov.bash_im_bot.dao.StateRepository;
 import ru.butakov.bash_im_bot.dao.StripRepository;
 import ru.butakov.bash_im_bot.entity.State;
 import ru.butakov.bash_im_bot.entity.rss.strip.StripItem;
 
-import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
@@ -68,7 +68,7 @@ public class StateService {
         return Collections.unmodifiableSet(state.getStripItems());
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean addStripItemToDb(StripItem item) {
         boolean result = false;
         item.prepareAfterCreatingFromXml();

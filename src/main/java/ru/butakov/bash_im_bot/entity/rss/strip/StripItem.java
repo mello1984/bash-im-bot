@@ -38,14 +38,21 @@ public class StripItem {
     @Getter
     boolean prepared;
 
+    public StripItem(String link, int number) {
+        this.link = link;
+        this.number = number;
+        prepared = true;
+    }
+
     public String getTextMessage() {
-        return MessageFormat.format("<a href=\"{0}\">#{1}</a>", link, String.valueOf(number));
+        return MessageFormat.format("<a href=\"https://bash.im/img/{0}\">#{1}</a>", link, String.valueOf(number));
     }
 
     public void prepareAfterCreatingFromXml() {
         if (!prepared) {
             number = Integer.parseInt(link.replaceAll("https://bash.im/comics/", ""));
-            link = description.replaceAll("(<img src=\"|\">)", "");
+            link = description.replaceAll("(<img src=\"|\">)", "")
+                    .replaceAll("https://bash.im/img/", "");
             prepared = true;
         }
     }
