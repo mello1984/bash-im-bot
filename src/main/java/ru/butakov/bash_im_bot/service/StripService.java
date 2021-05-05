@@ -5,8 +5,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -49,22 +47,21 @@ public class StripService {
         return stripItem.getTextMessage();
     }
 
-    private void generateStripDb() {
+    public void generateStripDb() {
+        generateStripDb(firstPeriod, lastPeriod);
+    }
+
+    public void generateStripDb(int firstPeriod, int lastPeriod) {
         List<Integer> periods = generatePeriodsList(firstPeriod, lastPeriod);
 
         Pattern patternLink = Pattern.compile("<img class=\"quote__img\" data-src=\"/img/(.*?)\" alt=\"\"/>");
         Pattern patternNumber = Pattern.compile("Стрип <a href=\"/strip/(\\d{8})\">");
 
         for (int period : periods) {
-            ResponseEntity<String> responseEntity = null;
+            ResponseEntity<String> responseEntity;
             try {
-                responseEntity = restTemplate.exchange(
-                        stripLink + period,
-                        HttpMethod.GET,
-                        null,
-                        new ParameterizedTypeReference<>() {
-                        });
-            } catch (RestClientException e) {
+                responseEntity = restTemplate.getForEntity(stripLink + period, String.class);
+            } catch (RestClientException ignored) {
                 log.warn("Generate strip database warn, exception in create ResponseEntity for period {}", period);
                 continue;
             }

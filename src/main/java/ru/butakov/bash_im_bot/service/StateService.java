@@ -5,15 +5,16 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.butakov.bash_im_bot.dao.StateRepository;
 import ru.butakov.bash_im_bot.dao.StripRepository;
 import ru.butakov.bash_im_bot.entity.State;
 import ru.butakov.bash_im_bot.entity.rss.strip.StripItem;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -22,6 +23,7 @@ public class StateService {
     final StateRepository stateRepository;
     final State state;
     final StripRepository stripRepository;
+    final ReentrantLock lock = new ReentrantLock();
 
     public StateService(@Autowired StateRepository stateRepository,
                         @Autowired StripRepository stripRepository) {
@@ -64,19 +66,44 @@ public class StateService {
         return Collections.unmodifiableSet(state.getUserSet());
     }
 
+    public int getUserCount() {
+        return state.getUserSet().size();
+    }
+
     public Set<StripItem> getStripItemSet() {
         return Collections.unmodifiableSet(state.getStripItems());
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    public int getStripCount() {
+        return state.getStripItems().size();
+    }
+
     public boolean addStripItemToDb(StripItem item) {
         boolean result = false;
         item.prepareAfterCreatingFromXml();
         if (item.isPrepared() && !state.getStripItems().contains(item)) {
-            item = stripRepository.save(item);
-            result = state.getStripItems().add(item);
-            stateRepository.save(state);
+            boolean locked = false;
+            try {
+                locked = lock.tryLock();
+                if (locked) {
+                    item = stripRepository.save(item);
+                    result = state.getStripItems().add(item);
+                    stateRepository.save(state);
+                }
+            } finally {
+                if (locked) lock.unlock();
+            }
         }
         return result;
+    }
+
+    public void clearStripItems() {
+        try {
+            lock.lock();
+            state.setStripItems(new HashSet<>());
+            stateRepository.save(state);
+        } finally {
+            lock.unlock();
+        }
     }
 }

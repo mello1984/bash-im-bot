@@ -1,5 +1,7 @@
 package ru.butakov.bash_im_bot.service;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +23,7 @@ import java.util.Set;
 
 @Service
 @Slf4j
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdaterService {
     @Autowired
     RestTemplate restTemplate;
@@ -42,13 +45,7 @@ public class UpdaterService {
     }
 
     private void updateStrips() {
-        ResponseEntity<StripRSS> responseEntity = restTemplate.exchange(
-                rssStripLink,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<>() {
-                }
-        );
+        ResponseEntity<StripRSS> responseEntity = restTemplate.getForEntity(rssStripLink, StripRSS.class);
         if (!responseEntity.getStatusCode().is2xxSuccessful() || responseEntity.getBody() == null) return;
 
         StripRSS rss = responseEntity.getBody();
@@ -70,13 +67,7 @@ public class UpdaterService {
     }
 
     private void updateQuotes() {
-        ResponseEntity<QuoteRSS> responseEntity = restTemplate.exchange(
-                rssQuoteLink,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<>() {
-                }
-        );
+        ResponseEntity<QuoteRSS> responseEntity = restTemplate.getForEntity(rssQuoteLink, QuoteRSS.class);
         if (!responseEntity.getStatusCode().is2xxSuccessful() || responseEntity.getBody() == null) return;
 
         QuoteRSS rss = responseEntity.getBody();

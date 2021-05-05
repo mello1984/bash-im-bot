@@ -33,8 +33,7 @@ public class MessageSenderService {
             } else log.info("BotApiMethod executed: {}", botApiMethod.toString());
         } catch (TelegramApiException e) {
             log.warn("Exception with executing botApiMethod: {}", botApiMethod.toString(), e);
-//            updateBlockingQueue.offer(botApiMethod);
-            Thread.sleep(500);
+            Thread.sleep(3000);
         }
     }
 

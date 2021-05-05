@@ -1,5 +1,7 @@
 package ru.butakov.bash_im_bot.bot;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -12,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class SendMessageFormat {
     @Value("${bot.button.quote}")
     String commandQuote;

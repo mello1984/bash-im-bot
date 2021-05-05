@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @PropertySources({
-        @PropertySource("classpath:private.properties")
+        @PropertySource(value = "classpath:private.properties", ignoreResourceNotFound = true)
 })
 public class AppConfig {
 
