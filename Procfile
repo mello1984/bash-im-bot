@@ -1,0 +1,1 @@
+bot: java -jar build/libs/bash_im_bot-1.0.0-all.jar
