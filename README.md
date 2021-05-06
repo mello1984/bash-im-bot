@@ -9,10 +9,14 @@
 - Настройки бота вынесены в application.properties 
 
 Стек технологий:
-
 - Java 11
 - Spring Boot
 - Spring Data JPA
 - PostgreSQL
 - Gradle
-- Heroku (настройки запуска в Procfile, bot.name и bot.token лучше записать в переменные системного окружения)
+- Heroku
+
+Запуск на Heroku:
+- Создать приложение, подключить Heroku Postgres addon
+- Сконфигурировать переменные: bot.name, bot.token, GRADLE_TASK=bootJar
+- Команда запуска в Procfile
