@@ -3,7 +3,7 @@ package ru.butakov.bash_im_bot.entity.rss.quote;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import ru.butakov.bash_im_bot.service.QuoteService;
+import ru.butakov.bash_im_bot.service.QuoteServiceImpl;
 
 import javax.xml.bind.annotation.*;
 import java.text.MessageFormat;
@@ -34,7 +34,7 @@ public class QuoteItem {
         this.pubDate = pubDate;
         this.description = description;
 
-        link = MessageFormat.format(QuoteService.QUOTE_LINK, String.valueOf(number));
+        link = MessageFormat.format(QuoteServiceImpl.QUOTE_LINK, String.valueOf(number));
         updateItem();
     }
 

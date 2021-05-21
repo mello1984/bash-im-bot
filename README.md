@@ -14,9 +14,7 @@
 - Spring Data JPA
 - PostgreSQL
 - Gradle
-- Heroku
+- Telegram Bot API: https://core.telegram.org/bots/api
+- Tesera API: https://api.tesera.ru/help/index.html
+- ORACLE Cloud VPS, image Canonical-Ubuntu-20.04
 
-Запуск на Heroku:
-- Создать приложение, подключить Heroku Postgres addon
-- Сконфигурировать переменные: bot.name, bot.token, GRADLE_TASK=bootJar
-- Команда запуска в Procfile

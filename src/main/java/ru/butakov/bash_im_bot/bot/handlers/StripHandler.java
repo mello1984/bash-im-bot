@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import ru.butakov.bash_im_bot.service.QuoteService;
 import ru.butakov.bash_im_bot.service.StripService;
 
 @Component
