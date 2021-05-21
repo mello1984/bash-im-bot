@@ -31,7 +31,6 @@ public class SendMessageFormatImpl implements SendMessageFormat {
         sendMessage.setParseMode("HTML");
         sendMessage.disableWebPagePreview();
         sendMessage.setChatId(String.valueOf(chatId));
-//        setButtons(sendMessage, commandQuote, commandStrip);
 
         List<List<String>> buttons = new ArrayList<>();
         buttons.add(Arrays.asList(commandQuote, commandStrip));

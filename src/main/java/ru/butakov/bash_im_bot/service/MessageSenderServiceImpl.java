@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -20,6 +21,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class MessageSenderServiceImpl implements MessageSenderService {
     @Autowired
     BashBot bashBot;
+    @Value("${bot.send.message.enabled}")
+    boolean enabled;
     final BlockingQueue<BotApiMethod<?>> updateBlockingQueue = new LinkedBlockingQueue<>();
 
     @Scheduled(fixedDelayString = "${bot.sendmessage.updateperiod}")
@@ -39,6 +42,6 @@ public class MessageSenderServiceImpl implements MessageSenderService {
 
     @Override
     public boolean offerBotApiMethodToQueue(BotApiMethod<?> botApiMethod) {
-        return updateBlockingQueue.offer(botApiMethod);
+        return enabled ? updateBlockingQueue.offer(botApiMethod) : true;
     }
 }
