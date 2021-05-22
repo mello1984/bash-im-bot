@@ -5,8 +5,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -54,9 +52,9 @@ public class QuoteServiceImpl implements QuoteService {
 
     private Optional<QuoteItem> getQuoteItem(int number) {
         String url = MessageFormat.format(quoteLink, String.valueOf(number));
-        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<>() {
-        });
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
 
+        if (responseEntity.getBody() == null) return Optional.empty();
         if (responseEntity.getBody().contains(bashImMainPageTitle)) return Optional.empty();
 
         String singleStringResponse = responseEntity.getBody().replaceAll("[\\n\\r\\t]", "");
@@ -70,6 +68,7 @@ public class QuoteServiceImpl implements QuoteService {
         matcher = patternBody.matcher(singleStringResponse);
         if (matcher.find()) publicationBody = matcher.group(1).trim();
 
+        if (publicationDate == null || publicationBody == null) return Optional.empty();
         QuoteItem item = new QuoteItem(number, publicationDate, publicationBody);
         return Optional.of(item);
     }
