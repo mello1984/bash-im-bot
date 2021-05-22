@@ -1,119 +1,111 @@
 package ru.butakov.bash_im_bot.service;
 
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.butakov.bash_im_bot.dao.StateRepository;
+import org.springframework.transaction.annotation.Transactional;
+import ru.butakov.bash_im_bot.dao.MaxQuoteNumberRepository;
 import ru.butakov.bash_im_bot.dao.StripRepository;
-import ru.butakov.bash_im_bot.entity.State;
+import ru.butakov.bash_im_bot.dao.UserRepository;
 import ru.butakov.bash_im_bot.entity.rss.strip.StripItem;
+import ru.butakov.bash_im_bot.entity.state.MaxQuoteNumber;
+import ru.butakov.bash_im_bot.entity.state.User;
 
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 @Service
-@FieldDefaults(level = AccessLevel.PRIVATE)
-@Slf4j
+@Transactional
 public class StateServiceImpl implements StateService {
-    final StateRepository stateRepository;
-    final State state;
-    final StripRepository stripRepository;
-    final ReentrantLock lock = new ReentrantLock();
+    MaxQuoteNumberRepository maxQuoteNumberRepository;
+    UserRepository userRepository;
+    StripRepository stripRepository;
 
-    public StateServiceImpl(@Autowired StateRepository stateRepository,
-                            @Autowired StripRepository stripRepository) {
-        this.stateRepository = stateRepository;
+    @Autowired
+    public StateServiceImpl(MaxQuoteNumberRepository maxQuoteNumberRepository,
+                            UserRepository userRepository,
+                            StripRepository stripRepository) {
+        this.maxQuoteNumberRepository = maxQuoteNumberRepository;
+        this.userRepository = userRepository;
         this.stripRepository = stripRepository;
-        state = loadState();
     }
 
     @Override
     public int updateMaxQuoteNumber(int number) {
-        if (state.getMaxQuoteNumber() < number) {
-            state.setMaxQuoteNumber(number);
-            stateRepository.save(state);
+        MaxQuoteNumber maxQuoteNumber = maxQuoteNumberRepository.findById(1).orElseGet(() -> {
+            MaxQuoteNumber quoteNumber = new MaxQuoteNumber(1, 1);
+            maxQuoteNumberRepository.save(quoteNumber);
+            return quoteNumber;
+        });
+
+        if (number > maxQuoteNumber.getId()) {
+            maxQuoteNumber.setMaxQuoteNumber(number);
+            maxQuoteNumberRepository.save(maxQuoteNumber);
         }
-        return state.getMaxQuoteNumber();
+
+        return number > maxQuoteNumber.getId() ? number : maxQuoteNumber.getId();
     }
 
     @Override
     public int getMaxQuoteNumber() {
-        return state.getMaxQuoteNumber();
-    }
-
-    private State loadState() {
-        Optional<State> stateOptional = stateRepository.findById(1);
-        State resultState = null;
-        if (stateOptional.isEmpty()) {
-            resultState = new State(1, 0);
-            stateRepository.save(resultState);
-        }
-        return stateOptional.orElse(resultState);
+        return maxQuoteNumberRepository
+                .findById(1)
+                .orElseGet(() -> {
+                    MaxQuoteNumber maxQuoteNumber = new MaxQuoteNumber(1, 1);
+                    maxQuoteNumberRepository.save(maxQuoteNumber);
+                    return maxQuoteNumber;
+                })
+                .getMaxQuoteNumber();
     }
 
     @Override
     public void addUser(long chatId) {
-        if (state.getUserSet().add(chatId)) stateRepository.save(state);
+        if (userRepository.findById(chatId).isEmpty()) userRepository.save(new User(chatId));
     }
 
     @Override
     public void removeUser(long chatId) {
-        if (state.getUserSet().remove(chatId)) stateRepository.save(state);
+        userRepository.deleteById(chatId);
     }
 
     @Override
     public Set<Long> getUserSet() {
-        return Collections.unmodifiableSet(state.getUserSet());
+        return userRepository
+                .findAll()
+                .stream()
+                .map(User::getId)
+                .collect(Collectors.toSet());
     }
 
     @Override
     public int getUserCount() {
-        return state.getUserSet().size();
+        return (int) userRepository.count();
     }
 
     @Override
     public Set<StripItem> getStripItemSet() {
-        return Collections.unmodifiableSet(state.getStripItems());
+        return new HashSet<>(stripRepository.findAll());
     }
 
     @Override
     public int getStripCount() {
-        return state.getStripItems().size();
+        return (int) stripRepository.count();
     }
 
     @Override
     public boolean addStripItemToDb(StripItem item) {
         boolean result = false;
         item.prepareAfterCreatingFromXml();
-        if (item.isPrepared() && !state.getStripItems().contains(item)) {
-            boolean locked = false;
-            try {
-                locked = lock.tryLock();
-                if (locked) {
-                    item = stripRepository.save(item);
-                    result = state.getStripItems().add(item);
-                    stateRepository.save(state);
-                }
-            } finally {
-                if (locked) lock.unlock();
-            }
+
+        if (stripRepository.findByNumber(item.getNumber()).isEmpty()) {
+            stripRepository.save(item);
+            result = true;
         }
         return result;
     }
 
     @Override
     public void clearStripItems() {
-        try {
-            lock.lock();
-            state.setStripItems(new HashSet<>());
-            stateRepository.save(state);
-        } finally {
-            lock.unlock();
-        }
+        stripRepository.deleteAll();
     }
 }

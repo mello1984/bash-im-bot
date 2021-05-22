@@ -18,6 +18,7 @@ import java.text.MessageFormat;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, doNotUseGetters = true)
 @Entity
 @Table(name = "strip")
+@Getter
 public class StripItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
