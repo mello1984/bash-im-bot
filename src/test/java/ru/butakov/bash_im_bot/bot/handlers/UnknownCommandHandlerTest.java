@@ -4,18 +4,17 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import ru.butakov.bash_im_bot.AbstractTest;
 import ru.butakov.bash_im_bot.bot.SendMessageFormat;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-@SpringBootTest
-class UnknownCommandHandlerTest {
+class UnknownCommandHandlerTest extends AbstractTest {
     @MockBean
     SendMessageFormat sendMessageFormat;
     @Value("${reply.unknown}")

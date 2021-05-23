@@ -4,17 +4,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import ru.butakov.bash_im_bot.AbstractTest;
 import ru.butakov.bash_im_bot.service.StateService;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
-class UnsubscribeHandlerTest {
+class UnsubscribeHandlerTest extends AbstractTest {
     @MockBean
     StateService stateService;
     @Value("${reply.unsubscribe}")

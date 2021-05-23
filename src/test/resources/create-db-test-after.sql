@@ -1,0 +1,1 @@
+TRUNCATE max_quote_number, strip, users;

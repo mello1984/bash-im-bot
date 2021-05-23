@@ -3,11 +3,13 @@ package ru.butakov.bash_im_bot;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import ru.butakov.bash_im_bot.bot.SendMessageFormat;
 import ru.butakov.bash_im_bot.bot.TelegramFacade;
 import ru.butakov.bash_im_bot.bot.handlers.InputMessageHandler;
-import ru.butakov.bash_im_bot.dao.StateRepository;
+import ru.butakov.bash_im_bot.dao.MaxQuoteNumberRepository;
 import ru.butakov.bash_im_bot.dao.StripRepository;
+import ru.butakov.bash_im_bot.dao.UserRepository;
 import ru.butakov.bash_im_bot.service.*;
 
 import java.util.List;
@@ -16,34 +18,28 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@TestPropertySource("/application-test.properties")
 class BashImBotApplicationTests {
-    private final List<InputMessageHandler> inputMessageHandlerList;
-    private final SendMessageFormat sendMessageFormat;
-    private final TelegramFacade telegramFacade;
-    private final StateRepository stateRepository;
-    private final StripRepository stripRepository;
-    private final MessageSenderService messageSenderService;
-    private final QuoteService quoteService;
-    private final StateService stateService;
-    private final StripService stripService;
-    private final UpdaterService updaterService;
+    List<InputMessageHandler> inputMessageHandlerList;
+    SendMessageFormat sendMessageFormat;
+    TelegramFacade telegramFacade;
+    MaxQuoteNumberRepository maxQuoteNumberRepository;
+    StripRepository stripRepository;
+    UserRepository userRepository;
+    MessageSenderService messageSenderService;
+    QuoteService quoteService;
+    StateService stateService;
+    StripService stripService;
+    UpdaterService updaterService;
 
     @Autowired
-    public BashImBotApplicationTests(List<InputMessageHandler> inputMessageHandlerList,
-                                     SendMessageFormat sendMessageFormat,
-                                     TelegramFacade telegramFacade,
-                                     StateRepository stateRepository,
-                                     StripRepository stripRepository,
-                                     MessageSenderService messageSenderService,
-                                     QuoteService quoteService,
-                                     StateService stateService,
-                                     StripService stripService,
-                                     UpdaterService updaterService) {
+    public BashImBotApplicationTests(List<InputMessageHandler> inputMessageHandlerList, SendMessageFormat sendMessageFormat, TelegramFacade telegramFacade, MaxQuoteNumberRepository maxQuoteNumberRepository, StripRepository stripRepository, UserRepository userRepository, MessageSenderService messageSenderService, QuoteService quoteService, StateService stateService, StripService stripService, UpdaterService updaterService) {
         this.inputMessageHandlerList = inputMessageHandlerList;
         this.sendMessageFormat = sendMessageFormat;
         this.telegramFacade = telegramFacade;
-        this.stateRepository = stateRepository;
+        this.maxQuoteNumberRepository = maxQuoteNumberRepository;
         this.stripRepository = stripRepository;
+        this.userRepository = userRepository;
         this.messageSenderService = messageSenderService;
         this.quoteService = quoteService;
         this.stateService = stateService;
@@ -52,7 +48,7 @@ class BashImBotApplicationTests {
     }
 
     @Test
-    void contextLoadsInputMessageHandlerList() {
+    void contextLoadsInputMessageHandlerListTest() {
         assertAll(
                 () -> assertFalse(inputMessageHandlerList.isEmpty()),
                 () -> assertEquals(7, inputMessageHandlerList.size())
@@ -60,47 +56,57 @@ class BashImBotApplicationTests {
     }
 
     @Test
-    void contextLoadsSendMessageFormatCreated() {
+    void contextLoadsSendMessageFormatCreatedTest() {
         assertThat(sendMessageFormat).isNotNull();
     }
 
     @Test
-    void contextLoadsTelegramFacadeCreated() {
+    void contextLoadsTelegramFacadeCreatedTest() {
         assertThat(telegramFacade).isNotNull();
     }
 
     @Test
-    void contextLoadsStateRepositoryCreated() {
-        assertThat(stateRepository).isNotNull();
+    void contextLoadsMaxQuoteNumberRepositoryTest() {
+        assertThat(maxQuoteNumberRepository).isNotNull();
     }
 
     @Test
-    void contextLoadsStripRepositoryCreated() {
+    void contextLoadsStripRepositoryTest() {
         assertThat(stripRepository).isNotNull();
     }
 
     @Test
-    void contextLoadsMessageSenderServiceCreated() {
+    void contextLoadsUserRepositoryCreatedTest() {
+        assertThat(userRepository).isNotNull();
+    }
+
+    @Test
+    void contextLoadsStripRepositoryCreatedTest() {
+        assertThat(stripRepository).isNotNull();
+    }
+
+    @Test
+    void contextLoadsMessageSenderServiceCreatedTest() {
         assertThat(messageSenderService).isNotNull();
     }
 
     @Test
-    void contextLoadsQuoteServiceCreated() {
+    void contextLoadsQuoteServiceCreatedTest() {
         assertThat(quoteService).isNotNull();
     }
 
     @Test
-    void contextLoadsStateServiceCreated() {
+    void contextLoadsStateServiceCreatedTest() {
         assertThat(stateService).isNotNull();
     }
 
     @Test
-    void contextLoadsStripServiceCreated() {
+    void contextLoadsStripServiceCreatedTest() {
         assertThat(stripService).isNotNull();
     }
 
     @Test
-    void contextLoadsUpdaterServiceCreated() {
+    void contextLoadsUpdaterServiceCreatedTest() {
         assertThat(updaterService).isNotNull();
     }
 

@@ -3,24 +3,21 @@ package ru.butakov.bash_im_bot.service;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import ru.butakov.bash_im_bot.AbstractTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
-class QuoteServiceImplTest {
+class QuoteServiceImplTest extends AbstractTest {
     @MockBean
     RestTemplate restTemplate;
     @MockBean
     StateService stateService;
     @Autowired
     QuoteServiceImpl quoteService;
-    @MockBean
-    UpdaterService updaterService;
 
     @Test
     void getRandomQuoteSuccessfulTest() {

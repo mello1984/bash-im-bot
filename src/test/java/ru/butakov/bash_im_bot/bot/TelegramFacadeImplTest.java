@@ -1,21 +1,18 @@
 package ru.butakov.bash_im_bot.bot;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import ru.butakov.bash_im_bot.AbstractTest;
 import ru.butakov.bash_im_bot.bot.handlers.HandlerManager;
 import ru.butakov.bash_im_bot.service.MessageSenderService;
 
-@SpringBootTest
-class TelegramFacadeImplTest {
+public class TelegramFacadeImplTest extends AbstractTest {
     @Autowired
     TelegramFacadeImpl telegramFacade;
     @MockBean
