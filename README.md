@@ -14,7 +14,7 @@
 - Spring Data JPA
 - PostgreSQL
 - Gradle
+- JUnit
 - Telegram Bot API: https://core.telegram.org/bots/api
 - Tesera API: https://api.tesera.ru/help/index.html
-- ORACLE Cloud VPS, image Canonical-Ubuntu-20.04
 
