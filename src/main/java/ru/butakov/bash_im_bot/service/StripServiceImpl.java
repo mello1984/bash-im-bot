@@ -11,7 +11,11 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import ru.butakov.bash_im_bot.entity.rss.strip.StripItem;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,7 +28,6 @@ public class StripServiceImpl implements StripService {
     int firstPeriod;
     int lastPeriod;
     String stripLink;
-    Random random = new Random();
 
     public StripServiceImpl(@Autowired StateService stateService,
                             @Autowired RestTemplate restTemplate,
@@ -38,12 +41,13 @@ public class StripServiceImpl implements StripService {
         this.lastPeriod = lastPeriod;
         this.stripLink = stripLink;
         if (needCreateStripBase) generateStripDb();
+
     }
 
     @Override
     public String getRandomStrip() {
         Set<StripItem> strips = stateService.getStripItemSet();
-        int rnd = random.nextInt(strips.size() - 1);
+        int rnd = ThreadLocalRandom.current().nextInt(strips.size());
         StripItem stripItem = strips.stream().skip(rnd).findFirst().get();
         return stripItem.getTextMessage();
     }

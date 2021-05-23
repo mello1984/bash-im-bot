@@ -12,7 +12,7 @@ import ru.butakov.bash_im_bot.entity.rss.quote.QuoteItem;
 
 import java.text.MessageFormat;
 import java.util.Optional;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,13 +38,11 @@ public class QuoteServiceImpl implements QuoteService {
         QUOTE_LINK = quoteLink;
     }
 
-    final Random random = new Random();
-
     @Override
     public String getRandomQuote() {
         Optional<QuoteItem> optionalItem = Optional.empty();
         while (optionalItem.isEmpty()) {
-            int rnd = random.nextInt(stateService.getMaxQuoteNumber());
+            int rnd = ThreadLocalRandom.current().nextInt(stateService.getMaxQuoteNumber());
             optionalItem = getQuoteItem(rnd);
         }
         return optionalItem.get().getTextMessage();
