@@ -48,7 +48,7 @@ public class UpdaterService {
 
         StripRSS rss = responseEntity.getBody();
         List<StripItem> items = rss.getChannel().getItemList();
-        Set<Long> subscribers = stateService.getUserSet();
+        Set<Long> subscribers = stateService.getUserIdSet();
 
         int count = 0;
         for (StripItem item : items) {
@@ -70,7 +70,7 @@ public class UpdaterService {
 
         QuoteRSS rss = responseEntity.getBody();
         List<QuoteItem> items = rss.getChannel().getItemList();
-        Set<Long> subscribers = stateService.getUserSet();
+        Set<Long> subscribers = stateService.getUserIdSet();
         int maxItem = stateService.getMaxQuoteNumber();
 
         for (QuoteItem item : items) {

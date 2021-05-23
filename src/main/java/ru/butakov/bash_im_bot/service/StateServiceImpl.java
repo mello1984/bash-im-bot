@@ -38,12 +38,12 @@ public class StateServiceImpl implements StateService {
             return quoteNumber;
         });
 
-        if (number > maxQuoteNumber.getId()) {
+        if (number > maxQuoteNumber.getMaxQuoteNumber()) {
             maxQuoteNumber.setMaxQuoteNumber(number);
             maxQuoteNumberRepository.save(maxQuoteNumber);
         }
 
-        return number > maxQuoteNumber.getId() ? number : maxQuoteNumber.getId();
+        return number > maxQuoteNumber.getMaxQuoteNumber() ? number : maxQuoteNumber.getMaxQuoteNumber();
     }
 
     @Override
@@ -65,11 +65,11 @@ public class StateServiceImpl implements StateService {
 
     @Override
     public void removeUser(long chatId) {
-        userRepository.deleteById(chatId);
+        if (userRepository.findById(chatId).isPresent()) userRepository.deleteById(chatId);
     }
 
     @Override
-    public Set<Long> getUserSet() {
+    public Set<Long> getUserIdSet() {
         return userRepository
                 .findAll()
                 .stream()

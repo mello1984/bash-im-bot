@@ -13,7 +13,7 @@ public interface StateService {
 
     void removeUser(long chatId);
 
-    Set<Long> getUserSet();
+    Set<Long> getUserIdSet();
 
     int getUserCount();
 
